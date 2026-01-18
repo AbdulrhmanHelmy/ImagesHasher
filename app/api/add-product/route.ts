@@ -4,7 +4,6 @@ import Product from '@/models/Product';
 import { v2 as cloudinary } from 'cloudinary';
 import { generateImageHash } from '@/lib/imageHasher';
 
-// إعداد Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -15,7 +14,6 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     
-    // التأكد من الأنواع
     const file = formData.get('file') as File | null;
     const name = formData.get('name') as string | null;
     const price = formData.get('price') as string | null;
@@ -24,12 +22,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // تحويل الملف
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     const imageHash = await generateImageHash(buffer);
 
-    // رفع الصورة (تحديد نوع الـ Promise)
     interface CloudinaryResponse { secure_url: string; }
     
     const uploadResult = await new Promise<CloudinaryResponse>((resolve, reject) => {
@@ -39,7 +35,6 @@ export async function POST(req: Request) {
       }).end(buffer);
     });
 
-    // الاتصال بـ MongoDB
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGODB_URI as string);
     }

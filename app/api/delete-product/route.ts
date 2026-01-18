@@ -22,5 +22,5 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ success: true, message: 'Product deleted' });
   } catch (error) {
     return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
-  }
+      } 
 }
